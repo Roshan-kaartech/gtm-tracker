@@ -193,7 +193,7 @@ export const fetchCloudSettings = async (): Promise<{ deadline?: string; cycleTi
       if (item.key === 'tracker_cycle') result.cycleTitle = item.value;
     }
     return result;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
@@ -230,7 +230,7 @@ export const deleteCloudDeliverable = async (id: string): Promise<boolean> => {
       return false;
     }
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -255,7 +255,7 @@ export const updateCloudSettings = async (deadline?: string, cycleTitle?: string
       });
     }
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };

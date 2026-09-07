@@ -23,7 +23,8 @@ export const ItemEditModal: React.FC<Props> = ({ isOpen, onClose, item, isNew = 
     owners, 
     updateDeliverable, 
     addDeliverable, 
-    deleteDeliverable 
+    deleteDeliverable,
+    showToast 
   } = useGTM();
 
   const [formData, setFormData] = useState<DeliverableItem>({
@@ -46,18 +47,21 @@ export const ItemEditModal: React.FC<Props> = ({ isOpen, onClose, item, isNew = 
   const [customOwner, setCustomOwner] = useState('');
 
   useEffect(() => {
+    setCustomStream('');
+    setCustomOwner('');
     if (item && !isNew) {
       setFormData(JSON.parse(JSON.stringify(item)));
     } else {
+      const tempId = 'm-' + Date.now();
       setFormData({
         id: '',
         stream: streams[0] || 'Branding & Marketing',
         title: '',
         startDate: '20-Aug',
         endDate: '30-Sep',
-        milestone1: { id: 'm1', name: 'Milestone 1 Deliverable', targetDate: '27-Aug', status: 'upcoming', notes: '' },
-        milestone2: { id: 'm2', name: 'Milestone 2 Deliverable', targetDate: '15-Sep', status: 'upcoming', notes: '' },
-        milestone3: { id: 'm3', name: 'Milestone 3 Deliverable', targetDate: '30-Sep', status: 'upcoming', notes: '' },
+        milestone1: { id: `${tempId}-1`, name: 'Milestone 1 Deliverable', targetDate: '27-Aug', status: 'upcoming', notes: '' },
+        milestone2: { id: `${tempId}-2`, name: 'Milestone 2 Deliverable', targetDate: '15-Sep', status: 'upcoming', notes: '' },
+        milestone3: { id: `${tempId}-3`, name: 'Milestone 3 Deliverable', targetDate: '30-Sep', status: 'upcoming', notes: '' },
         owner: owners[0] || 'Sai',
         priority: 'medium',
         progress: 0,
@@ -72,12 +76,16 @@ export const ItemEditModal: React.FC<Props> = ({ isOpen, onClose, item, isNew = 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      alert('Please enter a deliverable title');
+      showToast('Please enter a deliverable title', 'warning');
       return;
     }
 
-    const finalStream = customStream.trim() || formData.stream;
-    const finalOwner = customOwner.trim() || formData.owner;
+    const finalStream = formData.stream === '__custom' 
+      ? (customStream.trim() || 'General Strategy') 
+      : formData.stream;
+    const finalOwner = formData.owner === '__custom' 
+      ? (customOwner.trim() || 'Unassigned') 
+      : formData.owner;
 
     const dataToSave = {
       ...formData,

@@ -11,8 +11,7 @@ import {
   Plus, 
   Database, 
   FileSpreadsheet,
-  CalendarDays,
-  Sparkles
+  CalendarDays
 } from 'lucide-react';
 
 export const Header: React.FC = () => {

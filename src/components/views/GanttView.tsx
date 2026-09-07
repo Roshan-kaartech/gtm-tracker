@@ -8,7 +8,21 @@ export const GanttView: React.FC = () => {
 
   const parseDateToDayOffset = (dateStr: string): number => {
     if (!dateStr || dateStr === 'N/A') return 0;
-    const parts = dateStr.trim().split('-');
+    const cleanStr = dateStr.trim();
+    
+    // Check ISO format YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(cleanStr)) {
+      const parts = cleanStr.split('-');
+      const monthNum = parseInt(parts[1], 10);
+      const dayNum = parseInt(parts[2], 10) || 1;
+      if (monthNum === 7) return Math.min(30, Math.max(0, dayNum - 1));
+      if (monthNum === 8) return 31 + Math.min(30, Math.max(0, dayNum - 1));
+      if (monthNum === 9) return 62 + Math.min(29, Math.max(0, dayNum - 1));
+      if (monthNum > 9) return 91;
+      return 0;
+    }
+
+    const parts = cleanStr.split('-');
     if (parts.length < 2) return 0;
     const day = parseInt(parts[0], 10) || 1;
     const month = parts[1].toLowerCase();
@@ -19,13 +33,23 @@ export const GanttView: React.FC = () => {
       return 31 + Math.min(30, Math.max(0, day - 1));
     } else if (month.startsWith('sep')) {
       return 62 + Math.min(29, Math.max(0, day - 1));
+    } else if (month.startsWith('oct') || month.startsWith('nov') || month.startsWith('dec')) {
+      return 91;
     }
     return 0;
   };
 
   const totalDays = 92;
-  const todayOffset = 58;
-  const todayPct = (todayOffset / totalDays) * 100;
+  const currentMonth = new Date().getMonth(); // 0-indexed: 6 = Jul, 7 = Aug, 8 = Sep
+  const currentDay = new Date().getDate();
+  const calculatedTodayOffset = currentMonth === 6
+    ? Math.min(30, currentDay - 1)
+    : currentMonth === 7
+    ? 31 + Math.min(30, currentDay - 1)
+    : currentMonth === 8
+    ? 62 + Math.min(29, currentDay - 1)
+    : 58;
+  const todayPct = Math.min(100, Math.max(0, (calculatedTodayOffset / totalDays) * 100));
 
   return (
     <div className="space-y-4">

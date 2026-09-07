@@ -84,7 +84,7 @@ interface GTMContextType {
     inProgressMilestones: number;
     delayedMilestones: number;
     overallProgress: number;
-    workstreamProgress: Record<string, { total: number; completed: number; progress: number }>;
+    workstreamProgress: Record<string, { total: number; completed: number; progress: number; itemCount: number }>;
   };
 }
 
@@ -675,12 +675,13 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     let inProgressMilestones = 0;
     let delayedMilestones = 0;
 
-    const streamMap: Record<string, { total: number; completed: number; progress: number }> = {};
+    const streamMap: Record<string, { total: number; completed: number; progress: number; itemCount: number }> = {};
 
     items.forEach(item => {
       if (!streamMap[item.stream]) {
-        streamMap[item.stream] = { total: 0, completed: 0, progress: 0 };
+        streamMap[item.stream] = { total: 0, completed: 0, progress: 0, itemCount: 0 };
       }
+      streamMap[item.stream].itemCount += 1;
 
       [item.milestone1, item.milestone2, item.milestone3].forEach(m => {
         if (m && m.status !== 'not-applicable' && m.name && m.name.trim() !== '' && m.name.trim() !== 'N/A') {

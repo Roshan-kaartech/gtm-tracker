@@ -166,24 +166,32 @@ export const KPISummary: React.FC = () => {
       </div>
 
       {/* KaarTech Workstream Filter Bar */}
-      <div className="glass-card rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5">
-        <div className="flex items-center justify-between mb-2.5 px-1">
-          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#4b5563]">
-            Workstreams (Tap to filter)
-          </span>
-          {filters.stream !== 'all' && (
+      <div className="glass-card rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 border border-[#9E1B1E]/12 shadow-sm">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center space-x-2">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#4b5563]">
+              Workstreams & Velocity
+            </span>
+            <span className="text-[10px] text-[#9ca3af] hidden sm:inline">• Tap to filter</span>
+          </div>
+          {filters.stream !== 'all' ? (
             <button
               onClick={() => setFilters(prev => ({ ...prev, stream: 'all' }))}
-              className="text-[10px] sm:text-[11px] text-[#9E1B1E] hover:text-[#DE3A1E] font-bold transition-colors"
+              className="text-[11px] text-[#9E1B1E] hover:text-[#DE3A1E] font-bold transition-colors flex items-center gap-1 bg-red-50 hover:bg-red-100/80 px-2.5 py-0.5 rounded-full border border-red-200"
             >
-              Clear Filter ✕
+              <span>Showing: <strong>{filters.stream}</strong></span>
+              <span className="text-xs">✕</span>
             </button>
+          ) : (
+            <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-mono">
+              All 5 Workstreams Active
+            </span>
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
           {streams.map(st => {
-            const stData = stats.workstreamProgress[st] || { total: 0, completed: 0, progress: 0 };
+            const stData = stats.workstreamProgress[st] || { total: 0, completed: 0, progress: 0, itemCount: 0 };
             const style = WORKSTREAM_COLORS[st] || {
               badge: 'bg-red-50 text-[#9E1B1E] border-red-200',
               bar: 'bg-gradient-to-r from-[#9E1B1E] to-[#DE3A1E]',
@@ -196,34 +204,47 @@ export const KPISummary: React.FC = () => {
               <button
                 key={st}
                 onClick={() => handleStreamClick(st)}
-                className={`text-left p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all ${
+                className={`text-left p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all relative overflow-hidden group cursor-pointer ${
                   isSelected 
-                    ? 'bg-gradient-to-br from-red-50 to-orange-50 border-[#9E1B1E]/40 shadow-md ring-2 ring-[#9E1B1E]/20' 
-                    : 'bg-white hover:bg-stone-50 border-[#9E1B1E]/10 hover:border-[#DE3A1E]/30'
+                    ? 'bg-gradient-to-br from-red-50/90 to-orange-50/90 border-[#9E1B1E] shadow-md ring-2 ring-[#9E1B1E]/20 scale-[1.01]' 
+                    : 'bg-white hover:bg-stone-50/90 border-[#9E1B1E]/12 hover:border-[#DE3A1E]/35 shadow-xs'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center space-x-1.5 truncate">
-                    <span className={`w-2 h-2 rounded-full ${style.dot} shrink-0 shadow-sm`}></span>
-                    <span className="text-[11px] sm:text-xs font-bold text-black truncate">
+                {/* Header: Dot + Stream Title + Progress % */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-1.5 truncate pr-1">
+                    <span className={`w-2.5 h-2.5 rounded-full ${style.dot} shrink-0 shadow-xs`}></span>
+                    <span className="text-xs font-bold text-black truncate tracking-tight">
                       {st}
                     </span>
                   </div>
-                  <span className="text-[10px] sm:text-xs font-mono font-bold text-black pl-1 shrink-0">
+                  <span className={`text-xs font-mono font-bold shrink-0 px-1.5 py-0.2 rounded-md ${
+                    stData.progress === 100 
+                      ? 'bg-emerald-100 text-emerald-800' 
+                      : stData.progress > 0 
+                      ? 'bg-orange-100 text-[#DE3A1E]' 
+                      : 'bg-stone-100 text-stone-600'
+                  }`}>
                     {stData.progress}%
                   </span>
                 </div>
                 
-                <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden p-0.5 border border-stone-200">
+                {/* Thick & Bold Animated Progress Bar */}
+                <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden border border-stone-200 shadow-inner">
                   <div 
-                    className={`h-full ${style.bar} rounded-full transition-all duration-500 shadow-sm`}
-                    style={{ width: `${stData.progress}%` }}
+                    className={`h-full ${style.bar} rounded-full transition-all duration-700 ease-out shadow-sm`}
+                    style={{ width: `${Math.max(stData.progress, stData.completed > 0 ? 6 : 0)}%` }}
                   ></div>
                 </div>
 
-                <div className="mt-2 flex items-center justify-between text-[9px] sm:text-[10px] text-[#4b5563]">
-                  <span>{stData.total} items</span>
-                  <span className="font-semibold text-black">{stData.completed} done</span>
+                {/* Subtext: Initiatives & Milestones */}
+                <div className="mt-2 flex items-center justify-between text-[10px] text-[#4b5563] pt-0.5">
+                  <span className="font-semibold text-black">
+                    {stData.itemCount ?? 0} initiatives
+                  </span>
+                  <span className="font-mono text-[9.5px]">
+                    {stData.completed}/{stData.total} milestones
+                  </span>
                 </div>
               </button>
             );

@@ -7,15 +7,21 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        'xs': '480px',
+      },
       colors: {
         kaar: {
           deepRed: '#9E1B1E',
+          'deep-red': '#9E1B1E',
           orangeRed: '#DE3A1E',
+          'orange-red': '#DE3A1E',
           black: '#000000',
           dark: '#111114',
           charcoal: '#1c1c20',
           surface: '#ffffff',
           lightBg: '#f8f9fa',
+          'light-bg': '#f8f9fa',
           card: 'rgba(255, 255, 255, 0.92)',
           border: 'rgba(158, 27, 30, 0.12)',
           borderHover: 'rgba(158, 27, 30, 0.3)',

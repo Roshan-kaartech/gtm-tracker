@@ -12,38 +12,25 @@ export const KanbanView: React.FC = () => {
   const { filteredItems, setEditingItem, cycleMilestoneStatus, setIsAddModalOpen } = useGTM();
   const [mobileTab, setMobileTab] = useState<string>('all');
 
-  const columns: { id: string; title: string; count: number; items: DeliverableItem[] }[] = [
+  const columns: { id: string; title: string; count: number; items: DeliverableItem[]; dotColor: string }[] = [
     {
       id: 'not-started',
       title: 'Not Started',
+      dotColor: 'bg-stone-400',
       count: filteredItems.filter(i => i.progress === 0).length,
       items: filteredItems.filter(i => i.progress === 0)
     },
     {
       id: 'in-progress',
       title: 'In Progress',
-      count: filteredItems.filter(i => {
-        const hasDelayed = [i.milestone1, i.milestone2, i.milestone3].some(m => m?.status === 'delayed');
-        return i.progress > 0 && i.progress < 100 && !hasDelayed;
-      }).length,
-      items: filteredItems.filter(i => {
-        const hasDelayed = [i.milestone1, i.milestone2, i.milestone3].some(m => m?.status === 'delayed');
-        return i.progress > 0 && i.progress < 100 && !hasDelayed;
-      })
-    },
-    {
-      id: 'delayed',
-      title: 'At Risk',
-      count: filteredItems.filter(i => {
-        return [i.milestone1, i.milestone2, i.milestone3].some(m => m?.status === 'delayed');
-      }).length,
-      items: filteredItems.filter(i => {
-        return [i.milestone1, i.milestone2, i.milestone3].some(m => m?.status === 'delayed');
-      })
+      dotColor: 'bg-[#DE3A1E]',
+      count: filteredItems.filter(i => i.progress > 0 && i.progress < 100).length,
+      items: filteredItems.filter(i => i.progress > 0 && i.progress < 100)
     },
     {
       id: 'completed',
       title: 'Completed',
+      dotColor: 'bg-emerald-500',
       count: filteredItems.filter(i => i.progress === 100).length,
       items: filteredItems.filter(i => i.progress === 100)
     }
@@ -100,19 +87,22 @@ export const KanbanView: React.FC = () => {
         </button>
       </div>
 
-      {/* Responsive Columns Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+      {/* Responsive 3-Column Board */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
         {displayedColumns.map(col => (
           <div 
             key={col.id}
-            className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 flex flex-col min-h-[300px] sm:min-h-[500px]"
+            className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col min-h-[300px] sm:min-h-[500px] border border-[#9E1B1E]/12"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-2.5 border-b border-[#9E1B1E]/12 mb-3 px-1">
-              <span className="text-xs font-extrabold text-black">
-                {col.title}
-              </span>
-              <span className="text-[11px] font-mono font-bold text-black bg-stone-100 px-2 py-0.2 rounded-full border border-stone-200 shadow-xs">
+              <div className="flex items-center space-x-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`}></span>
+                <span className="text-xs sm:text-sm font-extrabold text-black">
+                  {col.title}
+                </span>
+              </div>
+              <span className="text-[11px] font-mono font-bold text-black bg-stone-100 px-2.5 py-0.5 rounded-full border border-stone-200 shadow-xs">
                 {col.count}
               </span>
             </div>

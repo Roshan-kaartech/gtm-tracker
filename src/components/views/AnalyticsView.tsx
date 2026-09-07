@@ -202,7 +202,7 @@ export const AnalyticsView: React.FC = () => {
             {owners.map(oName => {
               const oItems = items.filter(i => i.owner === oName);
               const avatar = OWNER_AVATARS[oName];
-              const pct = (oItems.length / items.length) * 100;
+              const pct = items.length > 0 ? (oItems.length / items.length) * 100 : 0;
 
               return (
                 <div key={oName} className="flex items-center space-x-2.5 text-xs">

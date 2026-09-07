@@ -50,7 +50,7 @@ export const MatrixView: React.FC = () => {
       return (
         <td 
           onClick={() => cycleMilestoneStatus(item.id, milestoneKey)}
-          className="p-3 text-center cursor-pointer hover:bg-stone-50 transition-colors group"
+          className="p-3 text-center cursor-pointer hover:bg-stone-50 transition-colors group border-r border-[#9E1B1E]/10"
           title="Click to activate milestone"
         >
           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono text-[#9ca3af] bg-stone-100 border border-dashed border-stone-300 group-hover:border-[#9E1B1E] transition-all">

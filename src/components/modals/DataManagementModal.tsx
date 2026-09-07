@@ -20,7 +20,10 @@ export const DataManagementModal: React.FC<Props> = ({ isOpen, onClose }) => {
     exportDataExcel, 
     exportDataJSON, 
     importData, 
-    resetToDefault 
+    resetToDefault,
+    showToast,
+    setDeadline,
+    setCycleTitle
   } = useGTM();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,12 +42,18 @@ export const DataManagementModal: React.FC<Props> = ({ isOpen, onClose }) => {
         if (Array.isArray(parsed)) {
           importData(parsed);
         } else if (parsed && Array.isArray(parsed.items)) {
+          if (parsed.deadline && typeof parsed.deadline === 'string') {
+            setDeadline(parsed.deadline);
+          }
+          if (parsed.cycleTitle && typeof parsed.cycleTitle === 'string') {
+            setCycleTitle(parsed.cycleTitle);
+          }
           importData(parsed.items);
         } else {
-          alert('Invalid JSON file format.');
+          showToast('Invalid JSON file format. Please upload valid GTM dataset.', 'error');
         }
-      } catch (err) {
-        alert('Invalid JSON file format.');
+      } catch {
+        showToast('Failed to parse JSON file.', 'error');
       }
     };
     reader.readAsText(file);
