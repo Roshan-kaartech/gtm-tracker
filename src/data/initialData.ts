@@ -21,49 +21,49 @@ export const INITIAL_OWNERS = [
 
 export const OWNER_AVATARS: Record<string, { bg: string; text: string; initial: string; role: string }> = {
   'Sai': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#9E1B1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'S', 
     role: 'GTM Strategy & Solution Lead' 
   },
   'Shrilaxmi N M': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#DE3A1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'SL', 
     role: 'Analyst & Public Relations' 
   },
   'Sabareesh': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#111827] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'SB', 
     role: 'Campaigns & Global Events' 
   },
   'Vignesh Barani': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#9E1B1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'VB', 
     role: 'AI Consulting Lead' 
   },
   'Pradeep': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#DE3A1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'P', 
     role: 'AI Delivery & Operations' 
   },
   'Roshan': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#000000] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'R', 
     role: 'Product Offerings Lead' 
   },
   'Diwakar': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#9E1B1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'D', 
     role: 'POC Architecture Lead' 
   },
   'Krithik': { 
-    bg: 'bg-white/10 text-white border-white/20 shadow-inner', 
+    bg: 'bg-[#DE3A1E] text-white shadow-sm', 
     text: 'text-white', 
     initial: 'K', 
     role: 'Global Enablement Manager' 
@@ -72,39 +72,39 @@ export const OWNER_AVATARS: Record<string, { bg: string; text: string; initial: 
 
 export const WORKSTREAM_COLORS: Record<string, { badge: string; border: string; bar: string; text: string; dot: string }> = {
   'Branding & Marketing': {
-    badge: 'bg-white/[0.06] text-white border-white/[0.12]',
-    border: 'border-white/[0.12]',
-    bar: 'bg-gradient-to-r from-blue-500 to-indigo-500',
-    text: 'text-[#f5f5f7]',
-    dot: 'bg-blue-400'
+    badge: 'bg-red-50 text-[#9E1B1E] border-red-200',
+    border: 'border-red-200',
+    bar: 'bg-gradient-to-r from-[#9E1B1E] to-[#DE3A1E]',
+    text: 'text-[#9E1B1E]',
+    dot: 'bg-[#9E1B1E]'
   },
   'GTM Solution': {
-    badge: 'bg-white/[0.06] text-white border-white/[0.12]',
-    border: 'border-white/[0.12]',
-    bar: 'bg-gradient-to-r from-purple-500 to-blue-500',
-    text: 'text-[#f5f5f7]',
-    dot: 'bg-purple-400'
+    badge: 'bg-orange-50 text-[#DE3A1E] border-orange-200',
+    border: 'border-orange-200',
+    bar: 'bg-gradient-to-r from-[#DE3A1E] to-[#ea580c]',
+    text: 'text-[#DE3A1E]',
+    dot: 'bg-[#DE3A1E]'
   },
   'Sales Playbook': {
-    badge: 'bg-white/[0.06] text-white border-white/[0.12]',
-    border: 'border-white/[0.12]',
-    bar: 'bg-gradient-to-r from-emerald-500 to-teal-400',
-    text: 'text-[#f5f5f7]',
-    dot: 'bg-emerald-400'
+    badge: 'bg-stone-100 text-black border-stone-300',
+    border: 'border-stone-300',
+    bar: 'bg-gradient-to-r from-[#1f2937] to-[#9E1B1E]',
+    text: 'text-black',
+    dot: 'bg-[#000000]'
   },
   'Sales Enablement': {
-    badge: 'bg-white/[0.06] text-white border-white/[0.12]',
-    border: 'border-white/[0.12]',
-    bar: 'bg-gradient-to-r from-amber-500 to-orange-400',
-    text: 'text-[#f5f5f7]',
-    dot: 'bg-amber-400'
+    badge: 'bg-rose-50 text-[#9E1B1E] border-rose-200',
+    border: 'border-rose-200',
+    bar: 'bg-gradient-to-r from-[#9E1B1E] to-[#f43f5e]',
+    text: 'text-[#9E1B1E]',
+    dot: 'bg-[#9E1B1E]'
   },
   'Webinar': {
-    badge: 'bg-white/[0.06] text-white border-white/[0.12]',
-    border: 'border-white/[0.12]',
-    bar: 'bg-gradient-to-r from-violet-500 to-pink-500',
-    text: 'text-[#f5f5f7]',
-    dot: 'bg-pink-400'
+    badge: 'bg-amber-50 text-[#DE3A1E] border-amber-200',
+    border: 'border-amber-200',
+    bar: 'bg-gradient-to-r from-[#DE3A1E] to-[#f59e0b]',
+    text: 'text-[#DE3A1E]',
+    dot: 'bg-[#DE3A1E]'
   }
 };
 

@@ -17,18 +17,18 @@ export const Toast: React.FC = () => {
         return (
           <div
             key={toast.id}
-            className="pointer-events-auto flex items-center justify-between p-3 rounded-2xl glass-modal shadow-2xl text-[#f5f5f7] border border-white/[0.18]"
+            className="pointer-events-auto flex items-center justify-between p-3 rounded-2xl glass-modal shadow-2xl text-gray-900 border border-kaar-deepRed/20 bg-white/95"
           >
             <div className="flex items-center space-x-2.5 pr-3">
-              {isSuccess && <Check className="w-4 h-4 text-emerald-400 shrink-0 shadow-[0_0_8px_#30d158]" />}
-              {isError && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 shadow-[0_0_8px_#ff453a]" />}
-              {isWarning && <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 shadow-[0_0_8px_#ffd60a]" />}
-              {toast.type === 'info' && <Info className="w-4 h-4 text-blue-400 shrink-0 shadow-[0_0_8px_#2997ff]" />}
-              <span className="text-xs font-medium leading-tight">{toast.message}</span>
+              {isSuccess && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
+              {isError && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+              {isWarning && <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />}
+              {toast.type === 'info' && <Info className="w-4 h-4 text-kaar-deepRed shrink-0" />}
+              <span className="text-xs font-semibold leading-tight text-gray-900">{toast.message}</span>
             </div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="p-1 rounded-full text-[#86868b] hover:text-white transition-colors"
+              className="p-1 rounded-full text-gray-400 hover:text-kaar-deepRed transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>

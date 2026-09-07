@@ -27,8 +27,7 @@ const DashboardContent: React.FC = () => {
     isDeadlineModalOpen,
     setIsDeadlineModalOpen,
     deadline,
-    cycleTitle,
-    theme
+    cycleTitle
   } = useGTM();
 
   const scrollToTop = () => {
@@ -36,28 +35,28 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#000000] text-[#f5f5f7]' : 'bg-[#f5f5f7] text-[#1d1d1f]'} flex flex-col font-sans transition-colors duration-200 glass-mesh-bg relative overflow-x-hidden`}>
+    <div className="min-h-screen bg-[#f8f9fa] text-[#111827] flex flex-col font-sans kaar-mesh-bg relative overflow-x-hidden">
       
-      {/* Floating Refractive Ambient Glow Orbs for Glassmorphism */}
+      {/* KaarTech Ambient Red & Orange-Red Soft Glowing Spotlights */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Top-Center Electric Blue Spotlight */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-blue-500/20 via-indigo-500/10 to-transparent rounded-full blur-[90px] animate-pulse-subtle"></div>
+        {/* Top-Center KaarTech Deep Red Spotlight */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-[#9E1B1E]/[0.09] via-[#DE3A1E]/[0.05] to-transparent rounded-full blur-[90px] animate-pulse-subtle"></div>
         
-        {/* Top-Right Purple Glow */}
-        <div className="absolute top-20 right-[-100px] w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[110px]"></div>
+        {/* Top-Right Soft Orange-Red Glow */}
+        <div className="absolute top-20 right-[-100px] w-[500px] h-[500px] bg-[#DE3A1E]/[0.06] rounded-full blur-[110px]"></div>
         
-        {/* Mid-Left Cyan Glow */}
-        <div className="absolute top-[40%] left-[-150px] w-[600px] h-[600px] bg-cyan-500/12 rounded-full blur-[120px]"></div>
+        {/* Mid-Left Soft Deep Red Glow */}
+        <div className="absolute top-[40%] left-[-150px] w-[600px] h-[600px] bg-[#9E1B1E]/[0.05] rounded-full blur-[120px]"></div>
         
-        {/* Bottom-Center Emerald Subtle Glow */}
-        <div className="absolute bottom-[-100px] left-1/3 w-[650px] h-[450px] bg-emerald-500/10 rounded-full blur-[130px]"></div>
+        {/* Bottom-Center Warm Glow */}
+        <div className="absolute bottom-[-100px] left-1/3 w-[650px] h-[450px] bg-[#DE3A1E]/[0.04] rounded-full blur-[130px]"></div>
       </div>
 
-      {/* Glass Header */}
+      {/* KaarTech Glass Header */}
       <Header />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4 relative z-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 space-y-4 relative z-10">
         
         {/* Glass Bento Summary */}
         <KPISummary />
@@ -65,7 +64,7 @@ const DashboardContent: React.FC = () => {
         {/* Glass Filter and Search Bar */}
         <FilterBar />
 
-        {/* Dynamic Glass View */}
+        {/* Dynamic KaarTech View */}
         <section className="transition-all duration-300">
           {viewMode === 'matrix' && <MatrixView />}
           {viewMode === 'gantt' && <GanttView />}
@@ -77,25 +76,27 @@ const DashboardContent: React.FC = () => {
 
       </main>
 
-      {/* Frosted Glass Footer */}
-      <footer className="mt-12 border-t border-white/[0.08] py-6 bg-black/40 backdrop-blur-2xl relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#86868b]">
+      {/* KaarTech Executive Footer */}
+      <footer className="mt-12 border-t border-[#9E1B1E]/10 py-6 bg-white/80 backdrop-blur-2xl relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#4b5563]">
           <div className="flex items-center space-x-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#30d158]"></span>
+            <span className="w-2 h-2 rounded-full bg-[#9E1B1E] shadow-[0_0_8px_#9E1B1E]"></span>
+            <span className="font-semibold text-black">KaarTech</span>
+            <span>•</span>
             <span>{cycleTitle} Executive Tracker</span>
           </div>
 
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsDeadlineModalOpen(true)}
-              className="flex items-center text-[#86868b] hover:text-amber-300 transition-colors cursor-pointer"
+              className="flex items-center text-[#4b5563] hover:text-[#9E1B1E] transition-colors cursor-pointer"
             >
-              <Calendar className="w-3 h-3 mr-1 text-amber-400" />
-              Target Deadline: <strong className="text-white ml-1 font-mono">{deadline}</strong>
+              <Calendar className="w-3.5 h-3.5 mr-1 text-[#DE3A1E]" />
+              Target Deadline: <strong className="text-black ml-1 font-mono">{deadline}</strong>
             </button>
             <button
               onClick={scrollToTop}
-              className="p-1.5 rounded-full glass-btn text-[#86868b] hover:text-white transition-colors"
+              className="p-1.5 rounded-full glass-btn text-[#4b5563] hover:text-[#9E1B1E] transition-colors"
               title="Scroll to top"
             >
               <ArrowUp className="w-3.5 h-3.5" />
@@ -104,7 +105,7 @@ const DashboardContent: React.FC = () => {
         </div>
       </footer>
 
-      {/* Glass Modals & Overlays */}
+      {/* Modals & Overlays */}
       <ItemEditModal
         isOpen={Boolean(editingItem)}
         onClose={() => setEditingItem(null)}
@@ -129,7 +130,7 @@ const DashboardContent: React.FC = () => {
         onClose={() => setIsDeadlineModalOpen(false)}
       />
 
-      {/* Frosted Toast Notifications */}
+      {/* Toast Notifications */}
       <Toast />
 
     </div>

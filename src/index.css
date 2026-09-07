@@ -4,14 +4,17 @@
 
 @layer base {
   :root {
-    --bg-primary: #000000;
-    --text-primary: #f5f5f7;
-    --text-secondary: #86868b;
+    --bg-primary: #f8f9fa;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --kaar-deep-red: #9E1B1E;
+    --kaar-orange-red: #DE3A1E;
+    --kaar-black: #000000;
   }
 
   body {
-    background-color: #000000;
-    color: #f5f5f7;
+    background-color: #f8f9fa;
+    color: #111827;
     letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -21,10 +24,11 @@
 
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.022em;
+    color: #111827;
   }
 }
 
-/* Minimalist Ultra-Thin Glass Scrollbar */
+/* Minimalist Ultra-Thin Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -35,72 +39,72 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(158, 27, 30, 0.2);
   border-radius: 9999px;
   backdrop-filter: blur(8px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(158, 27, 30, 0.4);
 }
 
 /* ===================================================
-   PREMIUM GLASSMORPHISM DESIGN SYSTEM
+   KAARTECH CORPORATE EXECUTIVE DESIGN SYSTEM
 =================================================== */
 
-/* Primary Frosted Glass Panel */
+/* Primary Frosted Glass Panel (White / Light Executive) */
 .glass-panel {
-  background: rgba(14, 14, 18, 0.58);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(158, 27, 30, 0.1);
   box-shadow: 
-    0 16px 40px -8px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
-    inset 0 0 16px 0 rgba(255, 255, 255, 0.02);
+    0 12px 36px -4px rgba(158, 27, 30, 0.06),
+    0 4px 12px -2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
 }
 
-/* Interactive Glass Card with Specular Shine */
+/* Interactive KaarTech Glass Card */
 .glass-card {
-  background: rgba(18, 18, 24, 0.5);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(158, 27, 30, 0.1);
   box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    0 4px 20px -2px rgba(158, 27, 30, 0.05),
+    0 2px 6px -1px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
 .glass-card:hover {
-  background: rgba(26, 26, 36, 0.65);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #ffffff;
+  border-color: rgba(222, 58, 30, 0.3);
   box-shadow: 
-    0 20px 48px -4px rgba(0, 0, 0, 0.8),
-    0 0 24px 0 rgba(41, 151, 255, 0.1),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+    0 16px 36px -4px rgba(158, 27, 30, 0.12),
+    0 4px 12px -2px rgba(222, 58, 30, 0.08),
+    inset 0 1px 0 0 #ffffff;
   transform: translateY(-2px);
 }
 
-/* Glass Header Container */
+/* KaarTech Glass Header */
 .glass-header {
-  background: rgba(8, 8, 10, 0.72);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border-bottom: 1px solid rgba(158, 27, 30, 0.14);
+  box-shadow: 0 4px 20px -2px rgba(158, 27, 30, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
 }
 
-/* Glass Segmented Control */
+/* KaarTech Glass Segmented Control */
 .glass-segmented {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(158, 27, 30, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(158, 27, 30, 0.12);
   border-radius: 9999px;
   padding: 3px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .glass-segmented-btn {
@@ -109,130 +113,121 @@
 }
 
 .glass-segmented-btn.active {
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, #9E1B1E 0%, #DE3A1E 100%);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(158, 27, 30, 0.4);
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 4px 14px rgba(158, 27, 30, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Glass Capsule Status Badges */
+/* KaarTech Status Badges */
 .glass-status-completed {
-  background: rgba(48, 209, 88, 0.12);
+  background: rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(12px);
-  color: #30d158;
-  border: 1px solid rgba(48, 209, 88, 0.3);
-  box-shadow: 
-    0 0 16px rgba(48, 209, 88, 0.12),
-    inset 0 1px 0 rgba(48, 209, 88, 0.3);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
 }
 
 .glass-status-active {
-  background: rgba(41, 151, 255, 0.12);
+  background: rgba(222, 58, 30, 0.1);
   backdrop-filter: blur(12px);
-  color: #2997ff;
-  border: 1px solid rgba(41, 151, 255, 0.3);
-  box-shadow: 
-    0 0 16px rgba(41, 151, 255, 0.12),
-    inset 0 1px 0 rgba(41, 151, 255, 0.3);
+  color: #9E1B1E;
+  border: 1px solid rgba(222, 58, 30, 0.35);
+  box-shadow: 0 2px 8px rgba(222, 58, 30, 0.12);
 }
 
 .glass-status-delayed {
-  background: rgba(255, 69, 58, 0.12);
+  background: rgba(158, 27, 30, 0.1);
   backdrop-filter: blur(12px);
-  color: #ff453a;
-  border: 1px solid rgba(255, 69, 58, 0.3);
-  box-shadow: 
-    0 0 16px rgba(255, 69, 58, 0.12),
-    inset 0 1px 0 rgba(255, 69, 58, 0.3);
+  color: #9E1B1E;
+  border: 1px solid rgba(158, 27, 30, 0.4);
+  box-shadow: 0 2px 8px rgba(158, 27, 30, 0.15);
 }
 
 .glass-status-upcoming {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(243, 244, 246, 0.8);
   backdrop-filter: blur(12px);
-  color: #86868b;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: #4b5563;
+  border: 1px solid rgba(209, 213, 219, 0.8);
 }
 
 .glass-status-upcoming:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(158, 27, 30, 0.3);
+  background: #ffffff;
 }
 
-/* Glass Modal Overlay & Container */
+/* Modal Dialog */
 .glass-modal {
-  background: rgba(16, 16, 22, 0.85);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
+  border: 1px solid rgba(158, 27, 30, 0.18);
   box-shadow: 
-    0 32px 80px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 24px 60px -8px rgba(158, 27, 30, 0.15),
+    0 12px 24px -4px rgba(0, 0, 0, 0.1);
 }
 
-/* Glass Input Controls */
+/* Input Fields */
 .glass-input {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+  background: #ffffff;
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  color: #111827;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #ffffff;
+  border-color: #DE3A1E;
   box-shadow: 
-    0 0 16px rgba(41, 151, 255, 0.15),
-    inset 0 1px 2px rgba(0, 0, 0, 0.4);
+    0 0 0 3px rgba(222, 58, 30, 0.15),
+    inset 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-/* Glass Button Styles */
+/* Buttons */
 .glass-btn {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(158, 27, 30, 0.15);
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: #ffffff;
+  border-color: rgba(158, 27, 30, 0.35);
+  color: #9E1B1E;
+  box-shadow: 0 4px 12px rgba(158, 27, 30, 0.1);
 }
 
 .glass-btn-primary {
-  background: rgba(255, 255, 255, 0.95);
-  color: #000000;
-  border: 1px solid rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, #9E1B1E 0%, #DE3A1E 100%);
+  color: #ffffff;
+  border: 1px solid #9E1B1E;
   box-shadow: 
-    0 8px 24px rgba(255, 255, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    0 4px 16px rgba(158, 27, 30, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-btn-primary:hover {
-  background: #ffffff;
+  background: linear-gradient(135deg, #851619 0%, #cb3016 100%);
   box-shadow: 
-    0 12px 32px rgba(255, 255, 255, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+    0 8px 24px rgba(158, 27, 30, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transform: translateY(-1px);
 }
 
-/* Floating Optical Mesh Background */
-.glass-mesh-bg {
-  background-color: #000000;
+/* KaarTech Ambient Background Gradient */
+.kaar-mesh-bg {
+  background-color: #f8f9fa;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(41, 151, 255, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(191, 90, 242, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(48, 209, 88, 0.06) 0px, transparent 60%),
-    radial-gradient(at 0% 100%, rgba(255, 69, 58, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(41, 151, 255, 0.1) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(158, 27, 30, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(222, 58, 30, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(255, 255, 255, 0.9) 0px, transparent 60%),
+    radial-gradient(at 0% 100%, rgba(222, 58, 30, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(158, 27, 30, 0.06) 0px, transparent 50%);
 }
