@@ -524,10 +524,7 @@ export const MatrixView: React.FC = () => {
                               <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px] ${avatarInfo.bg} shadow-sm`}>
                                 {avatarInfo.initial}
                               </div>
-                              <div className="truncate">
-                                <div className="font-bold text-black text-xs truncate">{item.owner}</div>
-                                <div className="text-[9px] text-[#4b5563] truncate font-medium">{avatarInfo.role}</div>
-                              </div>
+                              <span className="font-bold text-black text-xs truncate">{item.owner}</span>
                             </div>
                           </td>
 

@@ -12,6 +12,7 @@ import { AnalyticsView } from './components/views/AnalyticsView';
 import { ItemEditModal } from './components/modals/ItemEditModal';
 import { DataManagementModal } from './components/modals/DataManagementModal';
 import { DeadlineModal } from './components/modals/DeadlineModal';
+import { SupabaseConnectModal } from './components/modals/SupabaseConnectModal';
 import { Toast } from './components/Toast';
 import { ArrowUp, Calendar } from 'lucide-react';
 
@@ -26,6 +27,8 @@ const DashboardContent: React.FC = () => {
     setIsDataModalOpen,
     isDeadlineModalOpen,
     setIsDeadlineModalOpen,
+    isSupabaseModalOpen,
+    setIsSupabaseModalOpen,
     deadline,
     cycleTitle
   } = useGTM();
@@ -128,6 +131,11 @@ const DashboardContent: React.FC = () => {
       <DeadlineModal
         isOpen={isDeadlineModalOpen}
         onClose={() => setIsDeadlineModalOpen(false)}
+      />
+
+      <SupabaseConnectModal
+        isOpen={isSupabaseModalOpen}
+        onClose={() => setIsSupabaseModalOpen(false)}
       />
 
       {/* Toast Notifications */}

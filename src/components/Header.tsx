@@ -22,6 +22,8 @@ export const Header: React.FC = () => {
     setIsAddModalOpen, 
     setIsDataModalOpen,
     setIsDeadlineModalOpen,
+    setIsSupabaseModalOpen,
+    isCloudConnected,
     deadline,
     cycleTitle,
     exportDataExcel
@@ -56,10 +58,20 @@ export const Header: React.FC = () => {
                 <h1 className="text-xs sm:text-sm font-bold tracking-tight text-[#111827] truncate max-w-[120px] sm:max-w-none">
                   {cycleTitle}
                 </h1>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1 animate-pulse"></span>
-                  Live
-                </span>
+                
+                {/* Cloud Sync Status Badge */}
+                <button
+                  onClick={() => setIsSupabaseModalOpen(true)}
+                  className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all border shadow-xs ${
+                    isCloudConnected
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                      : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                  }`}
+                  title={isCloudConnected ? 'Supabase Real-Time Cloud Sync Active (Click to manage)' : 'Running on Local Storage (Click to connect Supabase)'}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isCloudConnected ? 'bg-emerald-600 animate-pulse' : 'bg-amber-500'}`}></span>
+                  <span>{isCloudConnected ? 'Cloud Sync' : 'Local Mode'}</span>
+                </button>
               </div>
               <p className="text-[10px] sm:text-[11px] text-[#4b5563] flex items-center gap-1">
                 <span className="hidden sm:inline">GTM Executive Strategy •</span>
@@ -98,6 +110,19 @@ export const Header: React.FC = () => {
 
           {/* Glass Actions */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+            {/* Cloud Sync Button (Mobile/Tablet) */}
+            <button
+              onClick={() => setIsSupabaseModalOpen(true)}
+              className={`inline-flex sm:hidden p-1.5 text-xs font-semibold rounded-full border transition-all ${
+                isCloudConnected
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                  : 'bg-amber-50 text-amber-700 border-amber-300'
+              }`}
+              title="Cloud Sync"
+            >
+              <span className={`w-2 h-2 rounded-full ${isCloudConnected ? 'bg-emerald-600 animate-pulse' : 'bg-amber-500'}`}></span>
+            </button>
+
             <button
               onClick={() => setIsDeadlineModalOpen(true)}
               className="hidden lg:inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full glass-btn text-[#9E1B1E] hover:text-[#DE3A1E] border-[#9E1B1E]/20"
@@ -119,7 +144,7 @@ export const Header: React.FC = () => {
             <button
               onClick={() => setIsDataModalOpen(true)}
               className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-semibold rounded-full glass-btn text-[#111827] hover:text-[#9E1B1E] flex items-center"
-              title="Data Hub"
+              title="Data Hub & Backups"
             >
               <Database className="w-3.5 h-3.5 sm:mr-1.5 text-[#DE3A1E]" />
               <span className="hidden sm:inline">Data Hub</span>

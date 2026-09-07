@@ -76,19 +76,16 @@ export const TeamView: React.FC = () => {
             className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex flex-col justify-between border border-[#9E1B1E]/12"
           >
             <div>
-              {/* Avatar & Role */}
+              {/* Avatar & Owner Name */}
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-center space-x-2.5 sm:space-x-3">
                   <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs ${owner.avatar.bg} shadow-md shrink-0`}>
                     {owner.avatar.initial}
                   </div>
                   <div className="min-w-0">
-                    <h4 className="font-extrabold text-black text-xs truncate">
+                    <h4 className="font-extrabold text-black text-sm truncate">
                       {owner.name}
                     </h4>
-                    <p className="text-[10px] text-[#4b5563] font-medium truncate">
-                      {owner.avatar.role}
-                    </p>
                   </div>
                 </div>
               </div>

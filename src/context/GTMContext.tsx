@@ -1,8 +1,20 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { DeliverableItem, FilterState, MilestoneStatus, ViewMode } from '../types/gtm';
 import { INITIAL_GTM_DATA, INITIAL_WORKSTREAMS, INITIAL_OWNERS } from '../data/initialData';
 import confetti from 'canvas-confetti';
 import * as XLSX from 'xlsx';
+import {
+  getSupabaseClient,
+  isSupabaseConfigured,
+  fetchCloudDeliverables,
+  fetchCloudSettings,
+  upsertCloudDeliverable,
+  deleteCloudDeliverable,
+  updateCloudSettings,
+  seedCloudDeliverables,
+  formatRowToDeliverable
+} from '../lib/supabase';
+import { calculateItemProgress } from '../lib/gtmUtils';
 
 interface ToastMessage {
   id: string;
@@ -23,6 +35,12 @@ interface GTMContextType {
   theme: 'dark' | 'light';
   toggleTheme: () => void;
   
+  // Cloud & Supabase State
+  isCloudConnected: boolean;
+  isSupabaseModalOpen: boolean;
+  setIsSupabaseModalOpen: (open: boolean) => void;
+  reconnectCloud: () => Promise<void>;
+
   // Deadline & Cycle Management
   deadline: string;
   setDeadline: (deadline: string) => void;
@@ -75,20 +93,10 @@ const THEME_KEY = 'gtm_tracker_theme';
 const DEADLINE_KEY = 'gtm_tracker_deadline';
 const CYCLE_KEY = 'gtm_tracker_cycle';
 
-// Strict helper to calculate item progress: Completed Milestones / Total Valid Milestones
-export const calculateItemProgress = (item: DeliverableItem): number => {
-  const milestones = [item.milestone1, item.milestone2, item.milestone3].filter(
-    m => m && m.status !== 'not-applicable' && m.name && m.name.trim() !== '' && m.name.trim() !== 'N/A'
-  );
-  if (milestones.length === 0) return 0;
-  
-  const completedCount = milestones.filter(m => m.status === 'completed').length;
-  return Math.round((completedCount / milestones.length) * 100);
-};
-
 const GTMContext = createContext<GTMContextType | undefined>(undefined);
 
 export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Local state initialized from localStorage
   const [items, setItems] = useState<DeliverableItem[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -116,10 +124,10 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return localStorage.getItem(CYCLE_KEY) || 'Q3 2026 Strategy';
   });
 
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const storedTheme = localStorage.getItem(THEME_KEY);
-    return storedTheme === 'light' ? 'light' : 'dark';
-  });
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+
+  const [isCloudConnected, setIsCloudConnected] = useState<boolean>(false);
+  const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState<boolean>(false);
 
   const [viewMode, setViewMode] = useState<ViewMode>('matrix');
   const [editingItem, setEditingItem] = useState<DeliverableItem | null>(null);
@@ -137,7 +145,19 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     priority: 'all'
   });
 
-  // Sync to local storage
+  const showToast = useCallback((message: string, type: 'success' | 'info' | 'warning' | 'error' = 'success') => {
+    const id = Date.now().toString() + Math.random().toString();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  }, []);
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Sync state to local storage as continuous fallback
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
@@ -146,15 +166,142 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [items]);
 
+  const [syncVersion, setSyncVersion] = useState<number>(0);
+
+  // Initial Data Sync & Realtime Subscription
+  useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setIsCloudConnected(false);
+      return;
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      setIsCloudConnected(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    // 1. Initial Data Fetch
+    const fetchInitialData = async () => {
+      try {
+        const [settings, cloudItems] = await Promise.all([
+          fetchCloudSettings(),
+          fetchCloudDeliverables()
+        ]);
+
+        if (!isMounted) return;
+
+        if (settings?.deadline) {
+          setDeadlineState(settings.deadline);
+          localStorage.setItem(DEADLINE_KEY, settings.deadline);
+        }
+        if (settings?.cycleTitle) {
+          setCycleTitleState(settings.cycleTitle);
+          localStorage.setItem(CYCLE_KEY, settings.cycleTitle);
+        }
+
+        if (cloudItems !== null) {
+          if (cloudItems.length > 0) {
+            const withProgress = cloudItems.map(item => ({
+              ...item,
+              progress: calculateItemProgress(item)
+            }));
+            setItems(withProgress);
+          } else {
+            // If remote database is completely empty, seed with baseline data
+            await seedCloudDeliverables(INITIAL_GTM_DATA);
+          }
+          setIsCloudConnected(true);
+        }
+      } catch (err) {
+        console.warn('Initial Supabase fetch error:', err);
+      }
+    };
+
+    fetchInitialData();
+
+    // 2. Setup Realtime Channel
+    const channelName = `gtm-realtime-${Date.now()}`;
+    const channel = client
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'gtm_deliverables' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newItem = formatRowToDeliverable(payload.new);
+            newItem.progress = calculateItemProgress(newItem);
+            setItems(prev => {
+              if (prev.some(i => i.id === newItem.id)) {
+                return prev.map(i => (i.id === newItem.id ? newItem : i));
+              }
+              return [newItem, ...prev];
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const updated = formatRowToDeliverable(payload.new);
+            updated.progress = calculateItemProgress(updated);
+            setItems(prev => prev.map(i => (i.id === updated.id ? updated : i)));
+          } else if (payload.eventType === 'DELETE') {
+            const oldId = payload.old?.id;
+            if (oldId) {
+              setItems(prev => prev.filter(i => i.id !== oldId));
+            }
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'gtm_settings' },
+        (payload) => {
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const row = payload.new;
+            if (row.key === 'tracker_deadline') {
+              setDeadlineState(row.value);
+              localStorage.setItem(DEADLINE_KEY, row.value);
+            }
+            if (row.key === 'tracker_cycle') {
+              setCycleTitleState(row.value);
+              localStorage.setItem(CYCLE_KEY, row.value);
+            }
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (!isMounted) return;
+        if (status === 'SUBSCRIBED') {
+          setIsCloudConnected(true);
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setIsCloudConnected(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      client.removeChannel(channel);
+    };
+  }, [syncVersion]);
+
+  const reconnectCloud = async () => {
+    setSyncVersion(v => v + 1);
+  };
+
   const setDeadline = (newDeadline: string) => {
     setDeadlineState(newDeadline);
     localStorage.setItem(DEADLINE_KEY, newDeadline);
+    if (isCloudConnected) {
+      updateCloudSettings(newDeadline);
+    }
     showToast(`Deadline updated to "${newDeadline}"`, 'info');
   };
 
   const setCycleTitle = (newCycleTitle: string) => {
     setCycleTitleState(newCycleTitle);
     localStorage.setItem(CYCLE_KEY, newCycleTitle);
+    if (isCloudConnected) {
+      updateCloudSettings(undefined, newCycleTitle);
+    }
   };
 
   // Start next tracker cycle (reuse structure, update deadline, optionally reset statuses)
@@ -164,27 +311,34 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCycleTitleState(newCycleTitle);
     localStorage.setItem(CYCLE_KEY, newCycleTitle);
 
-    if (resetStatuses) {
-      setItems(prevItems =>
-        prevItems.map(item => {
-          const resetMilestone = (m: any) => {
-            if (!m || m.status === 'not-applicable' || m.name === 'N/A') return m;
-            return { ...m, status: 'upcoming' as MilestoneStatus };
-          };
+    if (isCloudConnected) {
+      updateCloudSettings(newDeadline, newCycleTitle);
+    }
 
-          const updated = {
-            ...item,
-            endDate: newDeadline,
-            milestone1: resetMilestone(item.milestone1),
-            milestone2: resetMilestone(item.milestone2),
-            milestone3: resetMilestone(item.milestone3),
-            progress: 0,
-            updatedAt: new Date().toISOString()
-          };
-          updated.progress = calculateItemProgress(updated);
-          return updated;
-        })
-      );
+    if (resetStatuses) {
+      const resetItems = items.map(item => {
+        const resetMilestone = (m: any) => {
+          if (!m || m.status === 'not-applicable' || m.name === 'N/A') return m;
+          return { ...m, status: 'upcoming' as MilestoneStatus };
+        };
+
+        const updated = {
+          ...item,
+          endDate: newDeadline,
+          milestone1: resetMilestone(item.milestone1),
+          milestone2: resetMilestone(item.milestone2),
+          milestone3: resetMilestone(item.milestone3),
+          progress: 0,
+          updatedAt: new Date().toISOString()
+        };
+        updated.progress = calculateItemProgress(updated);
+        if (isCloudConnected) {
+          upsertCloudDeliverable(updated);
+        }
+        return updated;
+      });
+
+      setItems(resetItems);
       showToast(`Started new cycle "${newCycleTitle}" with deadline ${newDeadline}! 🎉`, 'success');
     } else {
       showToast(`Updated tracker cycle to "${newCycleTitle}" (Deadline: ${newDeadline})`, 'success');
@@ -195,30 +349,13 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Sync theme
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-    }
-    localStorage.setItem(THEME_KEY, theme);
+    root.classList.add('light');
+    root.classList.remove('dark');
+    localStorage.setItem(THEME_KEY, 'light');
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  const showToast = (message: string, type: 'success' | 'info' | 'warning' | 'error' = 'success') => {
-    const id = Date.now().toString() + Math.random().toString();
-    setToasts(prev => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      removeToast(id);
-    }, 4000);
-  };
-
-  const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+    setTheme('light');
   };
 
   const triggerConfetti = () => {
@@ -227,7 +364,7 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         particleCount: 70,
         spread: 60,
         origin: { y: 0.7 },
-        colors: ['#2997ff', '#30d158', '#ffd60a', '#bf5af2', '#ffffff']
+        colors: ['#9E1B1E', '#DE3A1E', '#10b981', '#3b82f6', '#000000']
       });
     } catch (e) {
       console.log('Confetti error', e);
@@ -266,6 +403,12 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
 
         newItem.progress = calculateItemProgress(newItem);
+        
+        // Push update to Supabase in background
+        if (isCloudConnected) {
+          upsertCloudDeliverable(newItem);
+        }
+
         return newItem;
       })
     );
@@ -293,6 +436,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
 
         newItem.progress = calculateItemProgress(newItem);
+
+        if (isCloudConnected) {
+          upsertCloudDeliverable(newItem);
+        }
+
         return newItem;
       })
     );
@@ -305,6 +453,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updatedAt: new Date().toISOString()
     };
     setItems(prev => prev.map(item => (item.id === updatedItem.id ? itemWithProgress : item)));
+    
+    if (isCloudConnected) {
+      upsertCloudDeliverable(itemWithProgress);
+    }
+
     showToast(`Updated "${updatedItem.title}" successfully`, 'success');
     setEditingItem(null);
   };
@@ -320,6 +473,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     itemToAdd.progress = calculateItemProgress(itemToAdd);
     setItems(prev => [itemToAdd, ...prev]);
+
+    if (isCloudConnected) {
+      upsertCloudDeliverable(itemToAdd);
+    }
+
     showToast(`Added new deliverable "${newItem.title}"`, 'success');
     setIsAddModalOpen(false);
   };
@@ -327,6 +485,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteDeliverable = (id: string) => {
     const target = items.find(i => i.id === id);
     setItems(prev => prev.filter(i => i.id !== id));
+
+    if (isCloudConnected) {
+      deleteCloudDeliverable(id);
+    }
+
     showToast(`Deleted "${target?.title || 'Deliverable'}"`, 'info');
     if (editingItem?.id === id) setEditingItem(null);
   };
@@ -343,6 +506,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     duplicated.progress = calculateItemProgress(duplicated);
     setItems(prev => [duplicated, ...prev]);
+
+    if (isCloudConnected) {
+      upsertCloudDeliverable(duplicated);
+    }
+
     showToast(`Duplicated "${target.title}"`, 'info');
   };
 
@@ -357,6 +525,12 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(DEADLINE_KEY);
     localStorage.removeItem(CYCLE_KEY);
+
+    if (isCloudConnected) {
+      seedCloudDeliverables(fresh);
+      updateCloudSettings('30-Sep', 'Q3 2026 Strategy');
+    }
+
     showToast('Dashboard reset to baseline GTM strategy data', 'info');
     setIsDataModalOpen(false);
   };
@@ -371,6 +545,11 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       progress: calculateItemProgress(item)
     }));
     setItems(withProg);
+
+    if (isCloudConnected) {
+      seedCloudDeliverables(withProg);
+    }
+
     showToast(`Successfully imported ${importedItems.length} deliverables!`, 'success');
     setIsDataModalOpen(false);
     return true;
@@ -557,6 +736,10 @@ export const GTMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setViewMode,
         theme,
         toggleTheme,
+        isCloudConnected,
+        isSupabaseModalOpen,
+        setIsSupabaseModalOpen,
+        reconnectCloud,
         deadline,
         setDeadline,
         cycleTitle,
