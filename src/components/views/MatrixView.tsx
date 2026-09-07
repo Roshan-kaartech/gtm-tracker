@@ -67,10 +67,9 @@ export const MatrixView: React.FC = () => {
     return (
       <td 
         onClick={() => cycleMilestoneStatus(item.id, milestoneKey)}
-        className="p-2.5 align-top cursor-pointer transition-all hover:bg-stone-50 relative group border-r border-[#9E1B1E]/10"
-        title="Click to cycle status"
+        className="p-2.5 align-top cursor-pointer transition-all hover:bg-stone-50 relative group/cell hover:z-50 border-r border-[#9E1B1E]/10"
       >
-        <div className={`p-2.5 rounded-xl sm:rounded-2xl transition-all ${
+        <div className={`p-2.5 rounded-xl sm:rounded-2xl transition-all relative group-hover/cell:z-50 ${
           isCompleted 
             ? 'glass-status-completed' 
             : isInProgress 
@@ -98,6 +97,41 @@ export const MatrixView: React.FC = () => {
           <p className="text-[11px] leading-snug font-medium text-[#111827] line-clamp-2">
             {milestone.name}
           </p>
+
+          {/* Hover Tooltip Box: Displays the entire milestone text in front of all rows and elements */}
+          <div className="absolute top-[calc(100%+6px)] left-1/2 -translate-x-1/2 z-[100] pointer-events-none opacity-0 invisible group-hover/cell:opacity-100 group-hover/cell:visible transition-all duration-200 ease-out transform group-hover/cell:translate-y-0 translate-y-1 w-64 sm:w-72 p-3 rounded-xl bg-[#0f172a]/95 backdrop-blur-md text-white text-xs shadow-2xl border border-white/15">
+            {/* Header info */}
+            <div className="flex items-center justify-between text-[10px] text-stone-300 border-b border-white/10 pb-1.5 mb-2 font-mono">
+              <span className="font-semibold text-white flex items-center gap-1">
+                <Calendar className="w-3 h-3 text-[#DE3A1E]" />
+                Target: {milestone.targetDate}
+              </span>
+              <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${
+                isCompleted ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' :
+                isInProgress ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40' :
+                isDelayed ? 'bg-red-500/20 text-red-300 border border-red-500/40' :
+                'bg-stone-500/20 text-stone-300 border border-stone-500/40'
+              }`}>
+                {milestone.status === 'completed' ? 'Done' : milestone.status === 'in-progress' ? 'Active' : milestone.status}
+              </span>
+            </div>
+            
+            {/* Full milestone text */}
+            <p className="text-[11px] font-semibold leading-relaxed text-stone-100 whitespace-normal break-words">
+              {milestone.name}
+            </p>
+
+            {/* Optional Notes */}
+            {milestone.notes && (
+              <div className="mt-2 pt-1.5 border-t border-white/10 text-[10px] text-stone-300 leading-snug whitespace-normal break-words font-normal">
+                <span className="text-stone-400 font-semibold">Notes: </span>
+                {milestone.notes}
+              </div>
+            )}
+
+            {/* Pointer arrow */}
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172a]/95 rotate-45 border-l border-t border-white/15"></div>
+          </div>
         </div>
       </td>
     );
@@ -357,7 +391,7 @@ export const MatrixView: React.FC = () => {
           2. DESKTOP / TABLET SPREADSHEET MATRIX (>= 768px)
       ========================================================= */}
       <div className="hidden md:block glass-card rounded-3xl overflow-hidden shadow-md border border-[#9E1B1E]/12">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto pb-10">
           <table className="w-full text-left border-collapse min-w-[1050px]">
             {/* Table Header */}
             <thead>
@@ -439,7 +473,7 @@ export const MatrixView: React.FC = () => {
                       return (
                         <tr 
                           key={item.id}
-                          className="hover:bg-red-50/30 transition-colors border-b border-stone-100 group"
+                          className="hover:bg-red-50/30 transition-colors border-b border-stone-100 group relative hover:z-30"
                         >
                           {/* Stream Pill Column */}
                           <td className="p-3.5 align-top font-bold text-black">
